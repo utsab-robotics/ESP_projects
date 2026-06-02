@@ -1,117 +1,157 @@
-🐍 MicroPython Installation on NodeMCU (ESP8266)
-📦 Install Required Tools
+# 🐍 NodeMCU (ESP8266) Setup with MicroPython
 
-Install the tools needed to flash and communicate with the ESP8266:
+This guide explains how to install MicroPython on a NodeMCU (ESP8266), connect to the REPL, upload files, and control LEDs.
 
+---
+
+## ⚠️ Important
+
+MicroPython replaces the Arduino firmware.
+
+- Arduino IDE Firmware ❌ + MicroPython ❌
+- MicroPython ✔️ OR Arduino ✔️
+
+Only one firmware can exist on the board at a time.
+
+---
+
+## 📦 Requirements
+
+### Hardware
+
+- NodeMCU (ESP8266)
+- USB Data Cable
+- LED
+- 220Ω Resistor
+
+### Software
+
+- Python 3
+- esptool
+- mpremote
+
+---
+
+## 🧰 Install Required Tools
+
+Install the required Python packages:
+
+```bash
 pip install esptool
 pip install mpremote
+```
 
 Verify installation:
 
+```bash
 esptool version
 mpremote --help
-📥 Download MicroPython Firmware
+```
 
-Download the latest ESP8266 firmware from the official MicroPython website:
+---
 
-Official Firmware Download Page
+## 📥 Download MicroPython Firmware
+
+Download the latest ESP8266 firmware from:
 
 https://micropython.org/download/ESP8266_GENERIC/
 
-For example, you may download a file similar to:
+Example firmware:
 
+```text
 ESP8266_GENERIC-20260406-v1.28.0.bin
+```
 
-Save the downloaded .bin file in your project folder.
+Place the downloaded file inside your project folder.
 
-Example:
+---
 
-ESP_Project/
-│
-├── ESP8266_GENERIC-20260406-v1.28.0.bin
-├── main.py
-└── boot.py
-🧹 Step 1: Erase Existing Firmware
+## 🧹 Step 1: Erase Existing Firmware
 
-Connect your NodeMCU and find the serial port.
-
-Linux:
-
-ls /dev/ttyUSB*
-
-Typical output:
-
-/dev/ttyUSB0
-
-Erase the flash memory:
-
+```bash
 esptool --chip esp8266 --port /dev/ttyUSB0 erase_flash
+```
 
-Expected output:
+Expected Output:
 
+```text
 Chip erase completed successfully
-⚙️ Step 2: Flash MicroPython Firmware
+```
 
-Navigate to the folder containing the downloaded firmware.
+---
 
-Run:
+## ⚙️ Step 2: Flash MicroPython
 
+```bash
 esptool --chip esp8266 --port /dev/ttyUSB0 \
 write_flash --flash_mode dio --flash_size 4MB \
 0x00000 ESP8266_GENERIC-20260406-v1.28.0.bin
+```
 
-If successful, you'll see:
+---
 
-Hash of data verified.
-Leaving...
-Hard resetting via RTS pin...
-🔌 Step 3: Open the MicroPython REPL
+## 🔌 Step 3: Connect to REPL
 
-Connect to the REPL (interactive terminal):
-
+```bash
 mpremote connect /dev/ttyUSB0 repl
+```
 
-You should see:
+Expected Output:
 
-MicroPython v1.xx on ESP8266
-
+```python
 >>>
-🧪 Step 4: Verify MicroPython
+```
 
-Inside the REPL, type:
+---
 
+## 🧪 Step 4: Test MicroPython
+
+```python
 print("MicroPython working")
+```
 
 Output:
 
+```text
 MicroPython working
+```
 
-Congratulations! MicroPython is installed correctly.
+---
 
-💡 Step 5: Test the Built-in LED (GPIO2)
+## 💡 Step 5: Built-in LED (GPIO2)
 
-Create a file named main.py:
+### Code
 
+```python
 from machine import Pin
 from time import sleep
 
 led = Pin(2, Pin.OUT)
 
 while True:
-    led.off()      # LED ON
+    led.off()
     sleep(1)
 
-    led.on()       # LED OFF
+    led.on()
     sleep(1)
+```
 
-Note: On most NodeMCU boards, the built-in LED uses inverted logic (Active LOW).
+---
 
-💡 Step 6: Test an External LED on D2 (GPIO4)
-Wiring
-NodeMCU D2 (GPIO4) ─── 220Ω ───► LED (+)
+## 💡 Step 6: External LED on D2 (GPIO4)
 
-NodeMCU GND ───────────────────► LED (-)
-Code
+### Wiring
+
+```text
+D2 (GPIO4) -----> LED (+)
+GND -----------> LED (-)
+
+Use a 220Ω resistor.
+```
+
+### Code
+
+```python
 from machine import Pin
 from time import sleep
 
@@ -123,101 +163,86 @@ while True:
 
     led.value(0)
     sleep(1)
-📤 Step 7: Upload Code to ESP8266
+```
 
-Upload main.py:
+---
 
+## 📤 Upload Code to ESP8266
+
+```bash
 mpremote connect /dev/ttyUSB0 fs cp main.py :main.py
+```
 
-Verify uploaded files:
+---
 
-mpremote connect /dev/ttyUSB0 fs ls
+## 🔄 Run Program
 
-Example output:
-
-boot.py
-main.py
-🔄 Step 8: Run the Program
-
-Reset the board:
-
+```bash
 mpremote connect /dev/ttyUSB0 reset
+```
 
-Or press the RESET button on the NodeMCU.
+or press the RESET button.
 
-🤖 Auto-Run Behavior
+---
 
-MicroPython automatically executes:
+## 🧠 Auto Run Behaviour
 
+When the board boots:
+
+```text
 boot.py
-↓
+   ↓
 main.py
+```
 
-every time the board powers on or resets.
+If `main.py` exists, it runs automatically.
 
-If main.py exists, it starts automatically.
+---
 
-🛑 Stop a Running Program
+## 🛑 Stop Program
 
 Inside REPL:
 
+```text
 Ctrl + C
+```
 
-This interrupts the running script.
+---
 
-🗑️ Delete a File from ESP8266
+## 🗑️ Delete Uploaded File
 
-Remove main.py:
-
+```bash
 mpremote connect /dev/ttyUSB0 fs rm main.py
+```
 
-Remove boot.py:
+---
 
-mpremote connect /dev/ttyUSB0 fs rm boot.py
-⚠️ Troubleshooting
-REPL Not Opening
+## ⚠️ Troubleshooting
 
-Check if another application is using the serial port:
+### REPL Not Working
 
+```bash
 fuser -k /dev/ttyUSB0
+```
 
-Then reconnect:
+### LED Not Blinking
 
-mpremote connect /dev/ttyUSB0 repl
-Permission Denied
+- Check GPIO pin
+- Check LED polarity
+- Check wiring
 
-Add your user to the dialout group:
+### Garbage Characters
 
-sudo usermod -aG dialout $USER
+- Wrong boot state
+- Reflash MicroPython
 
-Logout and login again.
+---
 
-Board Not Detected
+## ✅ What You Learned
 
-Check available ports:
-
-ls /dev/ttyUSB*
-
-or
-
-ls /dev/ttyACM*
-LED Not Blinking
-
-Verify:
-
-Correct GPIO number
-LED polarity
-Wiring connections
-220Ω resistor used
-✅ What You Learned
-Installing esptool and mpremote
-Downloading official MicroPython firmware
-Flashing ESP8266
-Using the REPL
-Uploading files
-Running MicroPython programs
-Controlling the built-in LED
-Controlling an external LED
-Managing files on the ESP8266
-
-This structure is much easier to follow in a README because every step is clearly separated and includes the expected output and purpose.
+- Installing MicroPython
+- Flashing ESP8266
+- Using REPL
+- Uploading Files
+- Auto-running Programs
+- Controlling LEDs
