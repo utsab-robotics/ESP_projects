@@ -1,0 +1,62 @@
+# =========================
+# 🐍 Python environment
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+venv/
+env/
+.venv/
+myvenv/
+
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =========================
+# 🧰 ESP tools
+# =========================
+.esptool/
+*.bin
+*.elf
+
+# MicroPython cache
+.mip/
+__pycache__/
+
+# =========================
+# 🔌 MicroPython device files
+# =========================
+# Ignore local copies of device files (optional)
+main_on_device.py
+
+# =========================
+# ⚙️ Arduino build files
+# =========================
+*.ino.with_bootloader.bin
+*.ino.bin
+*.hex
+
+build/
+*.elf
+*.map
+
+# Arduino cache
+*.d
+*.o
+
+# =========================
+# 💻 OS junk
+# =========================
+.DS_Store
+Thumbs.db
+
+# Linux temp files
+*~
+*.swp
+
+# =========================
+# 📦 VS Code (optional)
+# =========================
+.vscode/
