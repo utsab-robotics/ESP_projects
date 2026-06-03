@@ -1,0 +1,30 @@
+
+---
+
+# 🚫 `.gitignore`
+
+```gitignore
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+myvenv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# ESP/MicroPython temporary files
+*.mpy
+*.log
+
+# Backup files
+*.bak
+*.tmp
